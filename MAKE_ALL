@@ -1,0 +1,38 @@
+: to change options for profiling : -g
+
+
+par::
+	@for m in ./class/Makefile ./Makefile; \
+	     do sed -i -e 's/^OPT.*$$/OPT=-O3 -zero -qopenmp -mkl=parallel  /' $$m; done	
+	cd ./class;make;make install
+	rm -f flow.out;make; mv flow.out flow.out_par
+par1::
+	@for m in ./class/Makefile ./Makefile; \
+	     do sed -i -e 's/^OPT.*$$/OPT=-O3 -zero -qopenmp -llapack -traceback/' $$m; done	
+	cd ./class;make;make install
+	rm -f flow.out;make; mv flow.out flow.out_par
+
+ind::
+	@for m in ./class/Makefile ./Makefile; \
+		do sed -i -e 's/^OPT.*$$/OPT = -qopenmp -O3  -fPIC -free -zero -llapack -traceback/' $$m; done	
+	cd ./class;make clean;make;make install
+	rm -f getIndFiles.out;make -f Makefile_ind
+
+seq::
+	@for m in ./class/Makefile ./Makefile; \
+		do sed -i -e 's/^OPT.*$$/OPT=-O3 -zero -llapack/' $$m; done	
+	cd ./class;make clean;make;make install
+	rm -f flow.out;make; mv flow.out flow.out_seq
+seq1::
+	@for m in ./class/Makefile ./Makefile; \
+		do sed -i -e 's/^OPT.*$$/OPT=-O3 -zero -llapack /' $$m; done	
+	cd ./class;make;make install
+	rm -f flow.out;make; mv flow.out flow.out_seq
+
+
+clean:
+	cd  ./class/mod/;rm -f *
+	cd  ./class/lib/;rm -f *
+	cd ./class;make clean
+	@rm -f flow.out_*;make clean
+
