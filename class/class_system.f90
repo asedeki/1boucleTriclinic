@@ -46,7 +46,7 @@ module class_inputs
   implicit none
   !private
   type, public :: Inputs
-     real ( kind = wp ) :: t_perp_ini=0,t_perp2_ini=0
+     real ( kind = wp ) :: t_perp_ini=0,t_perp2_ini=0, tau_perp=0, Phi=0
      real ( kind = wp)  :: g1_ini=0, g2_ini=0,g3_ini=0
      real ( kind = wp)  :: g1_perp_ini=0,g2_perp_ini=0,g3_perp_ini=0
      real ( kind = wp ) :: Temperature=0,Temperature_final=0,d_Temperature(4),Temperature_Precision
@@ -70,6 +70,7 @@ module class_inputs
 contains
   type(Inputs) function init_intputs() result(this)
     this%t_perp_ini=0;this%t_perp2_ini=0
+    this%tau_perp=0;this%Phi=0
     this%g1_ini=0;this%g2_ini=0;this%g3_ini=0
     this%g1_perp_ini=0;this%g2_perp_ini=0;this%g3_perp_ini=0
     this%Temperature=0;this%Temperature_final=0;this%d_Temperature=0
@@ -114,6 +115,13 @@ contains
     case('t_perp_ini=')
        read (val,*) this%t_perp_ini
        ok=.true.
+    case('tau_perp=')
+       read (val,*) this%tau_perp
+       ok=.true.
+    case('Phi=')
+       read (val,*) this%Phi
+       ok=.true.
+    
     case('find_TC=')
        read (val,*) this%find_TC
        ok=.true.
@@ -256,6 +264,8 @@ contains
     write(file,'(a, e11.4)') "##E_F=", this%in%E0
     write(file,'(a,f8.2)')"##t_perp_ini=", this%in%t_perp_ini
     write(file,'(a,f5.2)')"##t_perp2_ini=", this%in%t_perp2_ini
+    write(file,'(a,f5.2)')"##tau_perp=", this%in%tau_perp
+    write(file,'(a,f5.2)')"##Phi=", this%in%Phi
     write(file,'(a,f5.2)')"##Tau=", this%in%Tau
     write(file,'(a,e12.4)')"##g1_ini=", this%in%g1_ini
     write(file,'(a,e12.4)')"##g2_ini=", this%in%g2_ini
