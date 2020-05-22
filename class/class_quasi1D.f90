@@ -13,6 +13,8 @@ module class_quasi1D
      integer::Nequations=0
      real ( kind = wp ) :: t_perp=0
      real ( kind = wp ) :: t_perp2=0
+     real ( kind = wp ) :: tau_perp=0
+     real ( kind = wp ) :: Phi=0
      real ( kind = wp)  :: g1_ini=0, g2_ini=0,g3_ini=0
      real ( kind = wp)  :: g1_perp_ini=0,g2_perp_ini=0,g3_perp_ini=0
      real ( kind = wp ) :: Temperature=0
@@ -75,6 +77,8 @@ contains
     this%Nequations=from%Nequations
     this%t_perp=from%t_perp
     this%t_perp2=from%t_perp2
+    this%tau_perp=from%tau_perp
+    this%Phi=from%Phi
     this%g1_ini=from%g1_ini;this%g2_ini=from%g2_ini;this%g3_ini=from%g3_ini
     this%g1_perp_ini=from%g1_perp_ini;this%g2_perp_ini=from%g2_perp_ini
     this%g3_perp_ini=from%g3_perp_ini
@@ -103,6 +107,10 @@ contains
 
     new_quasi1D%t_perp=new_quasi1D%sys%in%t_perp_ini
     new_quasi1D%t_perp2=new_quasi1D%sys%in%t_perp2_ini
+    
+    new_quasi1D%tau_perp=new_quasi1D%sys%in%tau_perp
+    new_quasi1D%Phi=new_quasi1D%sys%in%Phi
+    
     new_quasi1D%g1_ini=new_quasi1D%sys%in%g1_ini
     new_quasi1D%g2_ini=new_quasi1D%sys%in%g2_ini
     new_quasi1D%g3_ini=new_quasi1D%sys%in%g3_ini
@@ -237,7 +245,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     real(kind = wp)::E0El
     if(abs(this%l-x)>=1E-2*this%sys%in%error)then
-       call this%bc%values_tp20(x,this%Temperature,this%t_perp,this%t_perp2)
+       call this%bc%values_tp20(x,this%Temperature,this%t_perp,this%t_perp2,this%tau_perp,this%Phi)
     else
        this%l=x
     end if
@@ -254,7 +262,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     real(kind = wp)::E0El
     if(abs(this%l-x)>=1E-2*this%sys%in%error)then
-       call this%bc%values(x,this%Temperature,this%t_perp,this%t_perp2)
+       call this%bc%values(x,this%Temperature,this%t_perp,this%t_perp2,this%tau_perp,this%Phi)
     else
        this%l=x
     end if

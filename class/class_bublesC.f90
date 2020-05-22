@@ -7,6 +7,7 @@ module class_bublesC
   type, public :: bubleC
      real(kind = wp),allocatable::IP(:,:,:),IC(:,:,:),IP1(:,:)     
      real(kind = wp)::vec,t_perp_ini=0.0,t_perp2_ini=0.0
+     real(kind = wp)::tau_perp=0.0,Phi=0.0
      real(kind = wp)::E0=0.0,Temperature=0.0,tauSurE0,Tau
      integer::N_patche
    contains
@@ -48,9 +49,9 @@ contains
     class(bubleC),intent(inout) ::this
     deallocate(this%IP,this%IC,this%IP1)
   end subroutine destruct
-  subroutine values(this,x,Temp,tpi,tp2i)
+  subroutine values(this,x,Temp,tpi,tp2i,tau_perp,Phi)
     class(bubleC),intent(inout) ::this
-    real(kind = wp), intent(in) :: x,Temp,tpi,tp2i
+    real(kind = wp), intent(in) :: x,Temp,tpi,tp2i,tau_perp,Phi
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     real(kind = wp) E
     integer :: kp,qp,k1,sigma,i_inf,i_sup
@@ -58,7 +59,11 @@ contains
     
     this%t_perp_ini=tpi
     this%t_perp2_ini=tp2i
+    this%tau_perp=tau_perp
+    this%Phi=Phi
+    
     this%Temperature=Temp
+
     
     typ(1)="C";typ(2)="P"
     E=this%E0
@@ -99,7 +104,7 @@ contains
     !print*,x,32*this%IP(0,0,0),32*this%IC(0,0,0)
 
   end subroutine values
-  subroutine values_tp20(this,x,Temp,tpi,tp2i)
+  subroutine values_tp20(this,x,Temp,tpi,tp2i,tau_perp,Phi)
     class(bubleC),intent(inout) ::this
     real(kind = wp), intent(in) :: x,Temp,tpi,tp2i
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -109,6 +114,10 @@ contains
     
     this%t_perp_ini=tpi
     this%t_perp2_ini=tp2i
+    
+    this%tau_perp=tau_perp
+    this%Phi=Phi
+   
     this%Temperature=Temp
     typ(1)="C";typ(2)="P"
     E=this%E0
@@ -215,10 +224,21 @@ contains
     select case(typ)
 
     case('P')
-       Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&
-            +2*this%t_perp_ini*cos( (q_perp+k_perp)*this%vec) + 2*this%t_perp2_ini*cos(2*(q_perp+k_perp)*this%vec)
-       Eperp= Eperp-(2*this%t_perp_ini*cos(k1*this%vec) + 2*this%t_perp2_ini*cos(2*k1*this%vec)&
-            +2*this%t_perp_ini*cos((q_perp+k1)*this%vec) + 2*this%t_perp2_ini*cos(2*(q_perp+k1)*this%vec))
+       Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec-this%Phi)& 
+            + 2*this%t_perp2_ini*cos(2*k_perp*this%vec-2*this%Phi)&
+            + 2*this%tau_perp*sin(2*k_perp*this%vec-2*this%Phi)&
+
+            + 2*this%t_perp_ini*cos((q_perp+k_perp)*this%vec+this%Phi)&
+            + 2*this%t_perp2_ini*cos(2*(q_perp+k_perp)*this%vec+2*this%Phi)&
+            + 2*this%tau_perp*sin(2*(q_perp+k_perp)*this%vec+2*this%Phi)
+            
+       Eperp= Eperp-(2*this%t_perp_ini*cos(k1*this%vec-this%Phi)& 
+                     + 2*this%t_perp2_ini*cos(2*k1*this%vec-2*this%Phi)&
+                     + 2*this%tau_perp*sin(2*k1*this%vec-2*this%Phi)&
+                     + 2*this%t_perp_ini*cos((q_perp+k1)*this%vec+this%Phi)&
+                     + 2*this%t_perp2_ini*cos(2*(q_perp+k1)*this%vec+2*this%Phi)&
+                     + 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)
+                     )
        
     case('C')
        Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&
