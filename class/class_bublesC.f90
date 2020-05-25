@@ -237,7 +237,7 @@ contains
                      + 2*this%tau_perp*sin(2*k1*this%vec-2*this%Phi)&
                      + 2*this%t_perp_ini*cos((q_perp+k1)*this%vec+this%Phi)&
                      + 2*this%t_perp2_ini*cos(2*(q_perp+k1)*this%vec+2*this%Phi)&
-                     - 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)
+                     - 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)&
                      )
        
     case('C')

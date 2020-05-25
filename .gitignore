@@ -1,11 +1,17 @@
 # Prerequisites
 *.d
+*.dat
 
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
+*.tpl
+*.out
+*.out_*
+Fini
+tmp/
 
 # Precompiled Headers
 *.gch
