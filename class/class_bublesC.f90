@@ -61,7 +61,7 @@ contains
     this%t_perp2_ini=tp2i
     this%tau_perp=tau_perp
     this%Phi=Phi
-    
+    print*,"tau_perp,Phi=",tau_perp,Phi
     this%Temperature=Temp
 
     
@@ -106,7 +106,7 @@ contains
   end subroutine values
   subroutine values_tp20(this,x,Temp,tpi,tp2i,tau_perp,Phi)
     class(bubleC),intent(inout) ::this
-    real(kind = wp), intent(in) :: x,Temp,tpi,tp2i
+    real(kind = wp), intent(in) :: x,Temp,tpi,tp2i,tau_perp,Phi
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     real(kind = wp) E
     integer :: kp,qp,k1,sigma,i_inf,i_sup
@@ -237,8 +237,12 @@ contains
                      + 2*this%tau_perp*sin(2*k1*this%vec-2*this%Phi)&
                      + 2*this%t_perp_ini*cos((q_perp+k1)*this%vec+this%Phi)&
                      + 2*this%t_perp2_ini*cos(2*(q_perp+k1)*this%vec+2*this%Phi)&
-                     - 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)
+<<<<<<< HEAD
+                     + 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)
                      )
+=======
+                     + 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi))
+>>>>>>> 256f1f3bb7874c2744327b4ad351e084f71e531c
        
     case('C')
        Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&

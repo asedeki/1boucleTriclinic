@@ -2,6 +2,8 @@ N_patche= 32
 E0= 3000
 t_perp_ini= 200
 t_perp2_ini= 20
+tau_perp= 0.0
+Phi= 0.0
 Tau= 0
 
 
