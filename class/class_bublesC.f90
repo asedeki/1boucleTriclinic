@@ -81,7 +81,7 @@ contains
     do qp=i_inf,i_sup
        this%IP1(qp,0)=this%calcul(typ(2),qp,0,qp,"Eperp2")
        this%IP1(qp,1)=this%calcul(typ(2),qp,-i_inf,qp,"Eperp2")
-       do kp = i_inf,0
+       do kp = i_inf,i_sup
           do k1=i_inf,i_sup
              this%IC(k1,kp,qp)=this%calcul(typ(1),kp,qp,k1,"Eperp")
              this%IP(k1,kp,qp)=this%calcul(typ(2),kp,qp,k1,"Eperp")
@@ -95,11 +95,11 @@ contains
 
     this%E0=E
     
-    this%IC(i_inf:i_sup,1:this%N_patche/2,-this%N_patche/2:this%N_patche/2)=&
-         this%IC(i_sup:i_inf:-1,-1:-this%N_patche/2:-1,this%N_patche/2:-this%N_patche/2:-1)
+    !this%IC(i_inf:i_sup,1:this%N_patche/2,-this%N_patche/2:this%N_patche/2)=&
+    !     this%IC(i_sup:i_inf:-1,-1:-this%N_patche/2:-1,this%N_patche/2:-this%N_patche/2:-1)
     
-    this%IP(i_inf:i_sup,1:this%N_patche/2,-this%N_patche/2:this%N_patche/2)&
-         =this%IP(i_sup:i_inf:-1,-1:-this%N_patche/2:-1,this%N_patche/2:-this%N_patche/2:-1)
+    !this%IP(i_inf:i_sup,1:this%N_patche/2,-this%N_patche/2:this%N_patche/2)&
+    !     =this%IP(i_sup:i_inf:-1,-1:-this%N_patche/2:-1,this%N_patche/2:-this%N_patche/2:-1)
     !print*,x,sum(this%IP(0,:,0)),sum(this%IP(1,:,0))
     !print*,x,32*this%IP(0,0,0),32*this%IC(0,0,0)
 
@@ -224,28 +224,11 @@ contains
     select case(typ)
 
     case('P')
-       Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec-this%Phi)& 
-            + 2*this%t_perp2_ini*cos(2*k_perp*this%vec-2*this%Phi)&
-            + 2*this%tau_perp*sin(2*k_perp*this%vec-2*this%Phi)&
-
-            + 2*this%t_perp_ini*cos((q_perp+k_perp)*this%vec+this%Phi)&
-            + 2*this%t_perp2_ini*cos(2*(q_perp+k_perp)*this%vec+2*this%Phi)&
-            - 2*this%tau_perp*sin(2*(q_perp+k_perp)*this%vec+2*this%Phi)
-            
-       Eperp= Eperp-(2*this%t_perp_ini*cos(k1*this%vec-this%Phi)& 
-                     + 2*this%t_perp2_ini*cos(2*k1*this%vec-2*this%Phi)&
-                     + 2*this%tau_perp*sin(2*k1*this%vec-2*this%Phi)&
-                     + 2*this%t_perp_ini*cos((q_perp+k1)*this%vec+this%Phi)&
-                     + 2*this%t_perp2_ini*cos(2*(q_perp+k1)*this%vec+2*this%Phi)&
-                     - 2*this%tau_perp*sin(2*(q_perp+k1)*this%vec+2*this%Phi)&
-                     )
+      Eperp = this%Eperp2(k_perp,q_perp,'P') - this%Eperp2(k1,q_perp,'P')
        
     case('C')
-       Eperp= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&
-            -2*this%t_perp_ini*cos( (q_perp-k_perp)*this%vec) - 2*this%t_perp2_ini*cos(2*(q_perp-k_perp)*this%vec)
-       Eperp= Eperp-(2*this%t_perp_ini*cos(k1*this%vec) + 2*this%t_perp2_ini*cos(2*k1*this%vec)&
-            -2*this%t_perp_ini*cos( (q_perp-k1)*this%vec) - 2*this%t_perp2_ini*cos(2*(q_perp-k1)*this%vec))
-       
+      Eperp = this%Eperp2(k_perp,q_perp,'C') - this%Eperp2(k1,q_perp,'C')
+   
     end select
   end function EPERP
   function Eperp2(this,k_perp,q_perp,typ)
@@ -256,11 +239,24 @@ contains
     ! print*,"tp2=",this%t_perp2_ini
     select case(typ)
     case('P')
-       Eperp2= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&
-            +2*this%t_perp_ini*cos( (q_perp+k_perp)*this%vec) + 2*this%t_perp2_ini*cos(2*(q_perp+k_perp)*this%vec)
+      e('P')
+       Eperp2 = 2*this%t_perp_ini*cos(k_perp*this%vec+this%Phi)& 
+            + 2*this%t_perp2_ini*cos(2*k_perp*this%vec+2*this%Phi)&
+            - 2*this%tau_perp*sin(2*k_perp*this%vec+2*this%Phi)&
+
+            + 2*this%t_perp_ini*cos((q_perp+k_perp)*this%vec-this%Phi)&
+            + 2*this%t_perp2_ini*cos(2*(q_perp+k_perp)*this%vec-2*this%Phi)&
+            + 2*this%tau_perp*sin(2*(q_perp+k_perp)*this%vec-2*this%Phi)
+
     case('C')
-       Eperp2= 2*this%t_perp_ini*cos(k_perp*this%vec) + 2*this%t_perp2_ini*cos(2*k_perp*this%vec)&
-            -2*this%t_perp_ini*cos( (q_perp-k_perp)*this%vec) - 2*this%t_perp2_ini*cos(2*(q_perp-k_perp)*this%vec)
+      Eperp2 = 2*this%t_perp_ini*cos(k_perp*this%vec + this%Phi)& 
+            + 2*this%t_perp2_ini*cos(2*k_perp*this%vec + 2*this%Phi)&
+            - 2*this%tau_perp*sin(2*k_perp*this%vec + 2*this%Phi)&
+
+            - 2*this%t_perp_ini*cos( (q_perp-k_perp)*this%vec - this%Phi)& 
+            - 2*this%t_perp2_ini*cos(2*(q_perp-k_perp)*this%vec - 2*this%Phi)
+            + 2*this%tau_perp*sin(2*(q_perp-k_perp)*this%vec - 2*this%Phi)
+
     end select
   end function EPERP2
 end module class_bublesC
