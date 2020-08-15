@@ -239,7 +239,6 @@ contains
     ! print*,"tp2=",this%t_perp2_ini
     select case(typ)
     case('P')
-      e('P')
        Eperp2 = 2*this%t_perp_ini*cos(k_perp*this%vec+this%Phi)& 
             + 2*this%t_perp2_ini*cos(2*k_perp*this%vec+2*this%Phi)&
             - 2*this%tau_perp*sin(2*k_perp*this%vec+2*this%Phi)&
@@ -254,7 +253,7 @@ contains
             - 2*this%tau_perp*sin(2*k_perp*this%vec + 2*this%Phi)&
 
             - 2*this%t_perp_ini*cos( (q_perp-k_perp)*this%vec - this%Phi)& 
-            - 2*this%t_perp2_ini*cos(2*(q_perp-k_perp)*this%vec - 2*this%Phi)
+            - 2*this%t_perp2_ini*cos(2*(q_perp-k_perp)*this%vec - 2*this%Phi)&
             + 2*this%tau_perp*sin(2*(q_perp-k_perp)*this%vec - 2*this%Phi)
 
     end select
